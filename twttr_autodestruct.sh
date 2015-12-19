@@ -25,4 +25,4 @@ sed ':a;N;$!ba;s/\n/ /g' delete_me_column > delete_me_row
 t delete status -f `cat delete_me_row`
 
 # Delete workspace directory
-rm -rf /tmp/twttr_autodestruct
+cd ~ && rm -rf /tmp/twttr_autodestruct
