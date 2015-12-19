@@ -19,25 +19,25 @@ mkdir /tmp/twttr_autodestruct && cd /tmp/twttr_autodestruct
 /usr/local/bin/t timeline @${TWITTER_USER} --csv --number 1000 --decode-uris > $FILE
 
 if [[ -s $FILE ]] ; then
-echo "$FILE has data."
+  echo "$FILE has data."
+  # Remove columns headers
+  sed -i '1d' $FILE
+
+  # Copy archive
+  cp $FILE /home/$BOX_USER/archive_${TWITTER_USER}/.
+
+  # Get IDs only
+  awk -F"," '{print $1}' $FILE > delete_me_column
+
+  # Put the IDs on one line for t
+  sed ':a;N;$!ba;s/\n/ /g' delete_me_column > delete_me_row
+
+  # Delete!
+  /usr/local/bin/t delete status -f `cat delete_me_row`
+
+  # Delete workspace directory
+  cd ~ && rm -rf /tmp/twttr_autodestruct
 else
-echo "$FILE is empty."
+  echo "$FILE is empty" | mail -s "meeting today" ${BOX_USER}@localhost
 fi ;
 
-# Remove columns headers
-sed -i '1d' $FILE
-
-# Copy archive
-cp $FILE /home/$BOX_USER/archive_${TWITTER_USER}/.
-
-# Get IDs only
-awk -F"," '{print $1}' $FILE > delete_me_column
-
-# Put the IDs on one line for t
-sed ':a;N;$!ba;s/\n/ /g' delete_me_column > delete_me_row
-
-# Delete!
-/usr/local/bin/t delete status -f `cat delete_me_row`
-
-# Delete workspace directory
-cd ~ && rm -rf /tmp/twttr_autodestruct
