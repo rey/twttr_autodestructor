@@ -12,15 +12,13 @@ TWITTER_USER=hello_ebooks
 FILE=${TWITTER_USER}_$(date +%d%m%y).csv
 
 
-
-
-# Create archive
-/usr/local/bin/t timeline @${TWITTER_USER} --csv --number 1000 --decode-uris > $FILE
-
 if [[ -s $FILE ]] ; then
 
   # Make workspace directory
   mkdir /tmp/twttr_autodestruct && cd /tmp/twttr_autodestruct
+  
+  # Create archive
+  /usr/local/bin/t timeline @${TWITTER_USER} --csv --number 1000 --decode-uris > $FILE
   
   # Remove columns headers
   sed -i '1d' $FILE
