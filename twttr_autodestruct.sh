@@ -13,7 +13,7 @@ t timeline @${USER} --csv --number 1000 --decode-uris > ${USER}_$(date +%d%m%y).
 sed -i '1d' archive*.csv
 
 # Copy archive
-cp archive*.csv ~/archive_${USER}/.
+cp ${USER}*.csv ~/archive_${USER}/.
 
 # Get IDs only
 awk -F"," '{print $1}' archive*.csv > delete_me_column
