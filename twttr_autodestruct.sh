@@ -34,10 +34,11 @@ if [[ -s $FILE ]] ; then
 
     # Delete!
     /usr/local/bin/t delete status -f `cat delete_me_row`
-
  
   else
+  
     echo "$FILE is empty" | mail -s "$FILE is empty" ${BOX_USER}@localhost
+    
   fi ;
 
 # Delete workspace directory
