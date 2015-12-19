@@ -7,7 +7,7 @@ USER=hello_ebooks
 mkdir /tmp/twttr_autodestruct && cd /tmp/twttr_autodestruct
 
 # Create archive
-t timeline @${USER} --csv --number 1000 --decode-uris > ${USER}_$(date +%d%m%y).csv
+/usr/local/bin/t timeline @${USER} --csv --number 1000 --decode-uris > ${USER}_$(date +%d%m%y).csv
 
 # Remove columns headers
 sed -i '1d' ${USER}*.csv
@@ -22,7 +22,7 @@ awk -F"," '{print $1}' ${USER}*.csv > delete_me_column
 sed ':a;N;$!ba;s/\n/ /g' delete_me_column > delete_me_row
 
 # Delete!
-t delete status -f `cat delete_me_row`
+/usr/local/bin/t delete status -f `cat delete_me_row`
 
 # Delete workspace directory
 cd ~ && rm -rf /tmp/twttr_autodestruct
