@@ -1,9 +1,8 @@
 #!/bin/bash
 
-# # 45 23 * * 0 source twttr_autodestruct.sh
+# crontab
 # SHELL=/bin/bash
-# */5 * * * * source /home/vagrant/twttr_autodestruct.sh
-
+# 45 23 * * 0 source /home/vagrant/twttr_autodestruct.sh
 
 # Variables
 BOX_USER=vagrant
