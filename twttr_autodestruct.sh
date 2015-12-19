@@ -36,7 +36,7 @@ if [ -s ${FILE} ] ; then
  
 else
   
-  # Send an email saying there were no updates
+  # Send an email saying there were no twttr updates to backup
   echo "${FILE} is empty" | mail -s "${FILE} is empty" ${BOX_USER}@localhost
     
 fi ;
