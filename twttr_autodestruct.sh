@@ -16,7 +16,6 @@ mkdir /tmp/twttr_autodestruct && cd /tmp/twttr_autodestruct
 # Create archive
 /usr/local/bin/t timeline @${TWITTER_USER} --csv --number 1000 --decode-uris > ${FILE}
 
-
 if [ -s ${FILE} ] ; then
 
     # Remove columns headers
