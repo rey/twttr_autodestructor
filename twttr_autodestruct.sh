@@ -10,7 +10,7 @@ mkdir /tmp/twttr_autodestruct && cd /tmp/twttr_autodestruct
 t timeline @${USER} --csv --number 1000 --decode-uris > ${USER}_$(date +%d%m%y).csv
 
 # Remove columns headers
-sed -i '1d' archive*.csv
+sed -i '1d' ${USER}*.csv
 
 # Copy archive
 cp ${USER}*.csv ~/archive_${USER}/.
