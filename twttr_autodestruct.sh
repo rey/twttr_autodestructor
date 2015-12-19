@@ -16,7 +16,7 @@ sed -i '1d' archive*.csv
 cp ${USER}*.csv ~/archive_${USER}/.
 
 # Get IDs only
-awk -F"," '{print $1}' archive*.csv > delete_me_column
+awk -F"," '{print $1}' ${USER}*.csv > delete_me_column
 
 # Put the IDs on one line for t
 sed ':a;N;$!ba;s/\n/ /g' delete_me_column > delete_me_row
