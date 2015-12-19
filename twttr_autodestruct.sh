@@ -18,9 +18,6 @@ mkdir /tmp/twttr_autodestruct && cd /tmp/twttr_autodestruct
 
 if [ -s ${FILE} ] ; then
 
-    # Remove columns headers
-    sed -i '1d' ${FILE}
-
     # Copy archive
     cp $FILE /home/${BOX_USER}/archive_${TWITTER_USER}/.
 
