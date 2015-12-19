@@ -5,7 +5,6 @@
 # */5 * * * * source /home/vagrant/twttr_autodestruct.sh
 
 
-
 # Variables
 BOX_USER=vagrant
 TWITTER_USER=hello_ebooks
@@ -18,7 +17,7 @@ mkdir /tmp/twttr_autodestruct && cd /tmp/twttr_autodestruct
 /usr/local/bin/t timeline @${TWITTER_USER} --csv --number 1000 --decode-uris > ${FILE}
 
 
-if [[ -s ${FILE} ]] ; then
+if [ -s ${FILE} ] ; then
 
     # Remove columns headers
     sed -i '1d' ${FILE}
