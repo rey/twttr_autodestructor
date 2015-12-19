@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# # 45 23 * * 0 source twttr_autodestruct.sh
+# SHELL=/bin/bash
+# */5 * * * * source /home/vagrant/twttr_autodestruct.sh
+
+
+
 # Add user
 USER=hello_ebooks
 
