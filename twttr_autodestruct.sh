@@ -18,23 +18,26 @@ mkdir /tmp/twttr_autodestruct && cd /tmp/twttr_autodestruct
 
 if [ -s ${FILE} ] ; then
 
-    # Copy archive
-    cp $FILE /home/${BOX_USER}/archive_${TWITTER_USER}/.
+  # Copy archive
+  cp $FILE /home/${BOX_USER}/archive_${TWITTER_USER}/.
 
-    # Get IDs only
-    awk -F"," '{print $1}' ${FILE} > delete_me_column
+  # Remove columns headers		
+  sed -i '1d' ${FILE}
 
-    # Put the IDs on one line for t
-    sed ':a;N;$!ba;s/\n/ /g' delete_me_column > delete_me_row
+  # Get IDs only
+  awk -F"," '{print $1}' ${FILE} > delete_me_column
 
-    # Delete!
-    /usr/local/bin/t delete status -f `cat delete_me_row`
+  # Put the IDs on one line for t
+  sed ':a;N;$!ba;s/\n/ /g' delete_me_column > delete_me_row
+
+  # Delete!
+  /usr/local/bin/t delete status -f `cat delete_me_row`
  
-  else
+else
   
-    echo "${FILE} is empty" | mail -s "${FILE} is empty" ${BOX_USER}@localhost
+  echo "${FILE} is empty" | mail -s "${FILE} is empty" ${BOX_USER}@localhost
     
-  fi ;
+fi ;
 
 # Delete workspace directory
 cd ~ && rm -rf /tmp/twttr_autodestruct
