@@ -19,7 +19,6 @@ mkdir /tmp/twttr_autodestruct && cd /tmp/twttr_autodestruct
 /usr/local/bin/t timeline @${TWITTER_USER} --csv --number 1000 --decode-uris > $FILE
 
 if [[ -s $FILE ]] ; then
-  echo "$FILE has data."
   # Remove columns headers
   sed -i '1d' $FILE
 
