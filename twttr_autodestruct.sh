@@ -7,16 +7,16 @@ USER=hello_ebooks
 mkdir /tmp/twttr_autodestruct && cd /tmp/twttr_autodestruct
 
 # Create archive
-t timeline @${USER} --csv --number 1000 --decode-uris > archive_${USER}_$(date +%d%m%y).txt
+t timeline @${USER} --csv --number 1000 --decode-uris > archive_${USER}_$(date +%d%m%y).csv
 
 # Remove columns headers
-sed -i '1d' archive*.txt
+sed -i '1d' archive*.csv
 
 # Copy archive
-cp archive*.txt ~/archive_${USER}/.
+cp archive*.csv ~/archive_${USER}/.
 
 # Get IDs only
-awk -F"," '{print $1}' archive*.txt > delete_me_column
+awk -F"," '{print $1}' archive*.csv > delete_me_column
 
 # Put the IDs on one line for t
 sed ':a;N;$!ba;s/\n/ /g' delete_me_column > delete_me_row
