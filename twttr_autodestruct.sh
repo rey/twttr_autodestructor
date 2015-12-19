@@ -7,7 +7,7 @@ USER=hello_ebooks
 mkdir /tmp/twttr_autodestruct && cd /tmp/twttr_autodestruct
 
 # Create archive
-t timeline @${USER} --csv --number 1000 --decode-uris > archive_${USER}_$(date +%d%m%y).csv
+t timeline @${USER} --csv --number 1000 --decode-uris > ${USER}_$(date +%d%m%y).csv
 
 # Remove columns headers
 sed -i '1d' archive*.csv
