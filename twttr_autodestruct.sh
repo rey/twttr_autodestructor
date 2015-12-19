@@ -13,9 +13,10 @@ FILE=${TWITTER_USER}_$(date +%d%m%y).csv
 # Make workspace directory
 mkdir /tmp/twttr_autodestruct && cd /tmp/twttr_autodestruct
 
-# Create archive
+# Create archive file
 /usr/local/bin/t timeline @${TWITTER_USER} --csv --number 1000 --decode-uris > ${FILE}
 
+# If the file has contents (twttr updates to backup)
 if [ -s ${FILE} ] ; then
 
   # Copy archive
@@ -35,6 +36,7 @@ if [ -s ${FILE} ] ; then
  
 else
   
+  # Send an email saying there were no updates
   echo "${FILE} is empty" | mail -s "${FILE} is empty" ${BOX_USER}@localhost
     
 fi ;
