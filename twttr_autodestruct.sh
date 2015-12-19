@@ -6,23 +6,32 @@
 
 
 
-# Add user
-USER=hello_ebooks
+# Variables
+BOX_USER=vagrant
+TWITTER_USER=hello_ebooks
+FILE=${TWITTER_USER}_$(date +%d%m%y).csv
+
 
 # Make workspace directory
 mkdir /tmp/twttr_autodestruct && cd /tmp/twttr_autodestruct
 
 # Create archive
-/usr/local/bin/t timeline @${USER} --csv --number 1000 --decode-uris > ${USER}_$(date +%d%m%y).csv
+/usr/local/bin/t timeline @${TWITTER_USER} --csv --number 1000 --decode-uris > $FILE
+
+if [[ -s $FILE ]] ; then
+echo "$FILE has data."
+else
+echo "$FILE is empty."
+fi ;
 
 # Remove columns headers
-sed -i '1d' ${USER}*.csv
+sed -i '1d' $FILE
 
 # Copy archive
-cp ${USER}*.csv ~/archive_${USER}/.
+cp $FILE /home/$BOX_USER/archive_${TWITTER_USER}/.
 
 # Get IDs only
-awk -F"," '{print $1}' ${USER}*.csv > delete_me_column
+awk -F"," '{print $1}' $FILE > delete_me_column
 
 # Put the IDs on one line for t
 sed ':a;N;$!ba;s/\n/ /g' delete_me_column > delete_me_row
