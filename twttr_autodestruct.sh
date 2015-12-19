@@ -37,6 +37,6 @@ if [[ -s $FILE ]] ; then
   # Delete workspace directory
   cd ~ && rm -rf /tmp/twttr_autodestruct
 else
-  echo "$FILE is empty" | mail -s "meeting today" ${BOX_USER}@localhost
+  echo "$FILE is empty" | mail -s "$FILE is empty" ${BOX_USER}@localhost
 fi ;
 
