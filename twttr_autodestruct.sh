@@ -27,7 +27,7 @@ if [[ -s ${FILE} ]] ; then
     cp $FILE /home/${BOX_USER}/archive_${TWITTER_USER}/.
 
     # Get IDs only
-    awk -F"," '{print ${1}}' ${FILE} > delete_me_column
+    awk -F"," '{print $1}' ${FILE} > delete_me_column
 
     # Put the IDs on one line for t
     sed ':a;N;$!ba;s/\n/ /g' delete_me_column > delete_me_row
