@@ -8,7 +8,7 @@
 BOX_USER=vagrant
 TWITTER_USER=hello_ebooks
 
-BACKUP_PATH=/home/${BOX_USER}/archive_${TWITTER_USER}/
+BACKUP_FOLDER=/home/${BOX_USER}/archive_${TWITTER_USER}/
 FILE=${TWITTER_USER}_$(date +%d%m%y).csv
 
 # Make workspace directory
@@ -21,7 +21,7 @@ mkdir /tmp/twttr_autodestruct && cd /tmp/twttr_autodestruct
 if [ -s ${FILE} ] ; then
 
   # Copy archive
-  cp ${FILE} ${BACKUP_PATH}
+  cp ${FILE} ${BACKUP_FOLDER}
 
   # Remove columns headers		
   sed -i '1d' ${FILE}
