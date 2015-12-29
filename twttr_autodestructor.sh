@@ -12,7 +12,7 @@
 # Then you'll want to add something like the following to your crontab
 #
 # ```
-# SHELL=/bin/bash
+# L=/bin/bash
 # # Run at 23:45 every Sunday
 # 45 23 * * 0 source /home/vagrant/twttr_autodestruct.sh
 # ```
@@ -70,7 +70,7 @@ if [ -s dump_file ] ; then
   /usr/local/bin/t delete status -f `cat to_delete`
 
   # Report!
-  mail -s "twttr_autodestructor report" ${BOX_USER}@localhost < dump_file
+  mail -s "twttr_autodestructor report" ${BOX_USER}@localhost < to_delete
 
 else
 
