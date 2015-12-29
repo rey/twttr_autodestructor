@@ -7,13 +7,12 @@
 #
 # ```
 # sudo apt-get install ruby ruby-dev gcc g++ make
-# sudo gem install t
 # ```
 #
 # Then you'll want to add something like the following to your crontab
 #
 # ```
-# SHELLL=/bin/bash
+# SHELL=/bin/bash
 # # Run at 23:45 every Sunday
 # 45 23 * * 0 source /home/vagrant/twttr_autodestruct.sh
 # ```
@@ -46,7 +45,8 @@ mkdir ${WORKSPACE_FOLDER} && cd ${WORKSPACE_FOLDER}
 # If the dump_file has contents (ie. twttr updates to backup)
 if [ -s dump_file ] ; then
 
-  # replace endofline characters in multiple line tweets
+  # Replace endofline characters in multiple line tweets
+  # TODO: Make this less buggy
   awk -v RS='"[^"]*"' -v ORS= '{gsub(/\n/, " ", RT); print $0 RT}' dump_file > ${ARCHIVE_FILE}
 
   # Copy archive to ${BACKUP_FOLDER} location
