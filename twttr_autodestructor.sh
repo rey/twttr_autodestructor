@@ -1,49 +1,77 @@
 #!/bin/bash
 
-# crontab
+# INSTALL
+# =======
+#
+# Assuming you're running Ubuntu
+#
+# ```
+# sudo apt-get install ruby ruby-dev gcc g++ make
+# ```
+#
+# Then you'll want to add something like the following to your crontab
+#
+# ```
 # SHELL=/bin/bash
+# # Run at 23:45 every Sunday
 # 45 23 * * 0 source /home/vagrant/twttr_autodestruct.sh
-
-# Variables
-BOX_USER=vagrant
-TWITTER_USER=hello_ebooks
-
+# ```
+#
+#
+# VARIABLES
+# =========
+#
+# The user you're running the script as
+BOX_USER=rey
+# The Twitter account that you want to backup
+TWITTER_USER=reyhan
+# The location of the backup folder
 BACKUP_FOLDER=/home/${BOX_USER}/archive_${TWITTER_USER}/
+# The archive file
 ARCHIVE_FILE=${TWITTER_USER}_$(date +%d%m%y).csv
-
+# The location of the folder where all the magic happens
+WORKSPACE_FOLDER=/tmp/twttr_autodestructor
+#
+#
+# HERE BE DRAGONS
+# ===============
+#
 # Make workspace directory
-mkdir /tmp/twttr_autodestruct && cd /tmp/twttr_autodestruct
+mkdir ${WORKSPACE_FOLDER} && cd ${WORKSPACE_FOLDER}
 
 # Get tweets from Twitter
-/usr/local/bin/t timeline @${TWITTER_USER} --csv --number 1000 --decode-uris > raw_file
+/usr/local/bin/t timeline @${TWITTER_USER} --csv --number 1000 --decode-uris > dump_file
 
-# If the file has contents (twttr updates to backup)
-if [ -s raw_file ] ; then
+# If the dump_file has contents (ie. twttr updates to backup)
+if [ -s dump_file ] ; then
 
-  # replace endofline characters in tweets with multiple lines
-  awk -v RS='"[^"]*"' -v ORS= '{gsub(/\n\n/, " ", RT); print $0 RT}' raw_file > ${ARCHIVE_FILE}
+  # replace endofline characters in multiple line tweets
+  awk -v RS='"[^"]*"' -v ORS= '{gsub(/\n\n/, " ", RT); print $0 RT}' dump_file > ${ARCHIVE_FILE}
 
-  # Copy archive
+  # Copy archive to ${BACKUP_FOLDER} location
   cp ${ARCHIVE_FILE} ${BACKUP_FOLDER}
 
-  # Remove columns headers		
+  # Add to git
+  cd ${BACKUP_FOLDER} && git add . && git commit -m "Latest twttr updates" && cd ${WORKSPACE_FOLDER}
+
+  # Remove columns headers
   sed -i '1d' ${ARCHIVE_FILE}
 
   # Get IDs only
-  awk -F"," '{print $1}' ${ARCHIVE_FILE} > delete_me_column
+  awk -F "," '{print $1}' ${ARCHIVE_FILE} > to_delete
 
   # Put the IDs on one line for t
-  sed ':a;N;$!ba;s/\n/ /g' delete_me_column > delete_me_row
+  sed -i ':a;N;$!ba;s/\n/ /g' to_delete
 
   # Delete!
-  /usr/local/bin/t delete status -f `cat delete_me_row`
- 
+  /usr/local/bin/t delete status -f `cat to_delete`
+
 else
-  
+
   # Send an email saying there were no twttr updates to backup
   echo "${FILE} is empty" | mail -s "No tweets to archive" ${BOX_USER}@localhost
-    
+
 fi ;
 
 # Delete workspace directory
-cd ~ && rm -rf /tmp/twttr_autodestruct
+cd ~ && rm -rf ${WORKSPACE_FOLDER}
