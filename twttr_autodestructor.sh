@@ -20,7 +20,7 @@
 # ```
 # SHELL=/bin/bash
 # # Run at 23:45 every Sunday
-# 45 23 * * 0 source /home/vagrant/twttr_autodestruct.sh
+# 45 23 * * 0 source /home/vagrant/twttr_autodestructor.sh
 # ```
 #
 #
