@@ -9,6 +9,12 @@
 # sudo apt-get install ruby ruby-dev gcc g++ make
 # ```
 #
+# Install `t`
+#
+# ```
+# sudo gem install t
+# ```
+#
 # Then you'll want to add something like the following to your crontab
 #
 # ```
