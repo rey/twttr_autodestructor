@@ -46,13 +46,16 @@ mkdir ${WORKSPACE_FOLDER} && cd ${WORKSPACE_FOLDER}
 if [ -s dump_file ] ; then
 
   # replace endofline characters in multiple line tweets
-  awk -v RS='"[^"]*"' -v ORS= '{gsub(/\n\n/, " ", RT); print $0 RT}' dump_file > ${ARCHIVE_FILE}
+  awk -v RS='"[^"]*"' -v ORS= '{gsub(/\n/, " ", RT); print $0 RT}' dump_file > ${ARCHIVE_FILE}
 
   # Copy archive to ${BACKUP_FOLDER} location
   cp ${ARCHIVE_FILE} ${BACKUP_FOLDER}
 
   # Add to git
-  cd ${BACKUP_FOLDER} && git add . && git commit -m "Latest twttr updates" && cd ${WORKSPACE_FOLDER}
+  cd ${BACKUP_FOLDER} && git add . && git commit -m "Latest twttr updates"
+
+  # Move back to ${WORKSPACE_FOLDER}
+  cd ${WORKSPACE_FOLDER}
 
   # Remove columns headers
   sed -i '1d' ${ARCHIVE_FILE}
@@ -66,10 +69,13 @@ if [ -s dump_file ] ; then
   # Delete!
   /usr/local/bin/t delete status -f `cat to_delete`
 
+  # Report!
+  mail -s "twttr_autodestructor report" ${BOX_USER}@localhost < dump_file
+
 else
 
   # Send an email saying there were no twttr updates to backup
-  echo "${FILE} is empty" | mail -s "No tweets to archive" ${BOX_USER}@localhost
+  echo "dump_file was empty" | mail -s "No tweets to archive" ${BOX_USER}@localhost
 
 fi ;
 
