@@ -13,7 +13,7 @@
 # Then you'll want to add something like the following to your crontab
 #
 # ```
-# L=/bin/bash
+# SHELLL=/bin/bash
 # # Run at 23:45 every Sunday
 # 45 23 * * 0 source /home/vagrant/twttr_autodestruct.sh
 # ```
