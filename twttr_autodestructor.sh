@@ -1,90 +1,154 @@
-#!/bin/bash
-
-# INSTALL
-# =======
-#
-# Assuming you're running Ubuntu
-#
-# ```
-# sudo apt-get install ruby ruby-dev gcc g++ make
-# ```
-#
-# Install `t`
-#
-# ```
-# sudo gem install t
-# ```
-#
-# Then you'll want to add something like the following to your crontab
-#
-# ```
-# SHELL=/bin/bash
-# # Run at 23:45 every Sunday
-# 45 23 * * 0 source /home/vagrant/twttr_autodestructor.sh
-# ```
-#
-#
-# VARIABLES
-# =========
-#
-# The user you're running the script as
-BOX_USER=rey
 # The Twitter account that you want to backup
 TWITTER_USER=reyhan
 # The location of the backup folder
-BACKUP_FOLDER=/home/${BOX_USER}/archive_${TWITTER_USER}/
+BACKUP_FOLDER=${HOME}/archive_${TWITTER_USER}
 # The archive file
 ARCHIVE_FILE=${TWITTER_USER}_$(date +%d%m%y).csv
 # The location of the folder where all the magic happens
 WORKSPACE_FOLDER=/tmp/twttr_autodestructor
-#
-#
-# HERE BE DRAGONS
-# ===============
-#
-# Make workspace directory
-mkdir ${WORKSPACE_FOLDER} && cd ${WORKSPACE_FOLDER}
 
-# Get tweets from Twitter
-/usr/local/bin/t timeline @${TWITTER_USER} --csv --number 1000 --decode-uris > dump_file
 
-# If the dump_file has contents (ie. twttr updates to backup)
-if [ -s dump_file ] ; then
 
-  # Replace endofline characters in multiple line tweets
-  # TODO: Make this less buggy
-  awk -v RS='"[^"]*"' -v ORS= '{gsub(/\n/, " ", RT); print $0 RT}' dump_file > ${ARCHIVE_FILE}
+debug() {
+  echo
+  echo "******* DEBUG *******"
+  echo
+  echo "REPORTED RUBY VERSION"
+  echo "`ruby --version`"
+  echo
+  echo "REPORTED T VERSION"
+  echo "`t version`"
+  echo
+  echo "REPORTED T USER"
+  echo "`t whoami`"
+  echo
+  echo "*********************"
+  echo
+}
 
-  # Copy archive to ${BACKUP_FOLDER} location
-  cp ${ARCHIVE_FILE} ${BACKUP_FOLDER}
+cleanup() {
+  echo "Performing cleanup"
+  rm -rf ${WORKSPACE_FOLDER}
+  if [ $? -eq 0 ]; then
+    echo "${WORKSPACE_FOLDER} destroyed"
+  else
+    echo "ERROR at ${FUNCNAME}: ${WORKSPACE_FOLDER} unable to be destroyed"
+  fi
+}
 
-  # Add to git
-  cd ${BACKUP_FOLDER} && git add . && git commit -m "Latest twttr updates"
+createWorkspace() {
+  # if ${WORKSPACE_FOLDER} does not exist
+  if [ ! -d "${WORKSPACE_FOLDER}" ]; then
 
-  # Move back to ${WORKSPACE_FOLDER}
-  cd ${WORKSPACE_FOLDER}
+    mkdir ${WORKSPACE_FOLDER}
+    if [ $? -eq 0 ]; then
+      echo "${WORKSPACE_FOLDER} created"
+    else
+      echo "ERROR at ${FUNCNAME}: ${WORKSPACE_FOLDER} unable to be created"
+      exit
+    fi
 
+  else
+
+    echo "ERROR at ${FUNCNAME}: ${WORKSPACE_FOLDER} already exists"
+    exit
+
+  fi
+}
+
+destroyWorkspace() {
+  # if ${WORKSPACE_FOLDER} does exist
+  if [ -d "${WORKSPACE_FOLDER}" ]; then
+
+    rm -rf ${WORKSPACE_FOLDER}
+    if [ $? -eq 0 ]; then
+      echo "${WORKSPACE_FOLDER} destroyed"
+    else
+      echo "ERROR at ${FUNCNAME}: ${WORKSPACE_FOLDER} unable to be destroyed"
+      exit
+    fi
+
+  else
+
+    echo "ERROR at ${FUNCNAME}: ${WORKSPACE_FOLDER} does not exist"
+    exit
+
+  fi
+}
+
+createDumpfile() {
+  /usr/local/bin/t timeline @${TWITTER_USER} --csv --number 1000 --decode-uris > dumpfile
+  if [ $? -eq 0 ]; then
+    echo "dumpfile created"
+  else
+    echo "ERROR at ${FUNCNAME}: Unable to create dumpfile"
+    exit
+  fi
+}
+
+createBackup() {
+  # if dumpfile exists
+  if [ -f /tmp/twttr_autodestructor/dumpfile ]; then
+
+    # Replace endofline chars
+    awk -v RS='"[^"]*"' -v ORS= '{gsub(/\n/, " ", RT); print $0 RT}' dumpfile > ${ARCHIVE_FILE}
+
+    # if ${ARCHIVE_FILE} exists
+    if [ -f "${WORKSPACE_FOLDER}/${ARCHIVE_FILE}" ]; then
+
+      cp ${WORKSPACE_FOLDER}/${ARCHIVE_FILE} ${BACKUP_FOLDER}
+      # If copy was successful
+      if [ $? -eq 0 ]; then
+        # Add to git repo
+        cd ${BACKUP_FOLDER} && git add . && git commit -m "Latest twttr updates" && cd ${WORKSPACE_FOLDER}
+      else
+        echo "ERROR at ${FUNCNAME}: Unable to do the git stuff"
+        exit
+      fi
+
+    else
+
+      echo "ERROR at ${FUNCNAME}: ${ARCHIVE_FILE} does not exist"
+      exit
+
+    fi
+
+  else
+
+    echo "ERROR at ${FUNCNAME}: dumpfile does not exist"
+    exit
+
+  fi
+}
+
+
+destroyTweets() {
   # Remove columns headers
-  sed -i '1d' ${ARCHIVE_FILE}
+  sed -i '1d' ${WORKSPACE_FOLDER}/${ARCHIVE_FILE}
 
   # Get IDs only
-  awk -F "," '{print $1}' ${ARCHIVE_FILE} > to_delete
+  awk -F "," '{print $1}' ${WORKSPACE_FOLDER}/${ARCHIVE_FILE} > ${WORKSPACE_FOLDER}/to_delete
 
   # Put the IDs on one line for t
-  sed -i ':a;N;$!ba;s/\n/ /g' to_delete
+  sed -i ':a;N;$!ba;s/\n/ /g' ${WORKSPACE_FOLDER}/to_delete
+ 
+  /usr/local/bin/t delete status -f `cat ${WORKSPACE_FOLDER}/to_delete`
+  if [ $? -eq 0 ]; then
+    echo "Tweets deleted"
+  else
+    echo "ERROR at ${FUNCNAME}: Unable to delete tweets"
+    cp ${WORKSPACE_FOLDER}/to_delete ${HOME}/twttr_autodestructor_FAILED_DELETE_$(date +%d%m%y)
+    exit
+  fi
+}
 
-  # Delete!
-  /usr/local/bin/t delete status -f `cat to_delete`
 
-  # Report!
-  mail -s "twttr_autodestructor report" ${BOX_USER}@localhost < to_delete
+trap cleanup EXIT
 
-else
+mkdir -p ${BACKUP_FOLDER}
+# debug
+createWorkspace
+createDumpfile
+createBackup
+destroyWorkspace
 
-  # Send an email saying there were no twttr updates to backup
-  echo "dump_file was empty" | mail -s "No tweets to archive" ${BOX_USER}@localhost
-
-fi ;
-
-# Delete workspace directory
-cd ~ && rm -rf ${WORKSPACE_FOLDER}
