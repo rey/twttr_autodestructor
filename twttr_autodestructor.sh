@@ -87,7 +87,7 @@ destroyWorkspace() {
 }
 
 createDumpfile() {
-  /usr/local/bin/twurl "/1.1/statuses/user_timeline.json?screen_name=${TWITTER_USER}&count=200" > ${WORKSPACE_FOLDER}/dumpfile
+  /usr/local/bin/twurl "/1.1/statuses/user_timeline.json?screen_name=${TWITTER_USER}&count=200&trim_user=1" > ${WORKSPACE_FOLDER}/dumpfile
   if [ $? -eq 0 ]; then
     echo "SUCCESS: dumpfile created"
     if [ ! -s ${WORKSPACE_FOLDER}/dumpfile ]; then
