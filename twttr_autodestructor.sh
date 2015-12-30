@@ -77,9 +77,13 @@ destroyWorkspace() {
 }
 
 createDumpfile() {
-  /usr/local/bin/t timeline @${TWITTER_USER} --csv --number 1000 --decode-uris > dumpfile
+  /usr/local/bin/t timeline @${TWITTER_USER} --csv --number 1000 --decode-uris > ${WORKSPACE_FOLDER}/dumpfile
   if [ $? -eq 0 ]; then
     echo "dumpfile created"
+    if [ ! -s ${WORKSPACE_FOLDER}/dumpfile ]; then
+      echo "ERROR at ${FUNCNAME}: dumpfile is empty"
+      exit
+    fi
   else
     echo "ERROR at ${FUNCNAME}: Unable to create dumpfile"
     exit
