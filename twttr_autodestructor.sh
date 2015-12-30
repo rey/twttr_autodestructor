@@ -1,3 +1,8 @@
+#
+#
+# twurl authorize --consumer-key key --consumer-secret secret
+
+
 # The Twitter account that you want to backup
 TWITTER_USER=reyhan
 # The location of the backup folder
