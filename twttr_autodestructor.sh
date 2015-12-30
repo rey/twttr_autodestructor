@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # twttr_autodestructor.sh
 # Version 1.0
 # Rey Dhuny
