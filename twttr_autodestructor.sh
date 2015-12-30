@@ -156,7 +156,7 @@ destroyTweets() {
     NO_OF_TWEETS=`cat ${WORKSPACE_FOLDER}/to_delete | wc -l`
     echo
     echo "SUCCESS: ${NO_OF_TWEETS} tweet(s) deleted"
-    /usr/local/bin/twurl --data "description=${NO_OF_TWEETS} twttr updates evaporated on $(date +"%A %d %B %Y")" /1.1/account/update_profile.json
+    /usr/local/bin/twurl --data "description=${NO_OF_TWEETS} twttr update(s) evaporated on $(date +"%A %d %B %Y")" /1.1/account/update_profile.json
   else
     echo "ERROR at ${FUNCNAME}: Unable to delete tweets"
     cp ${WORKSPACE_FOLDER}/to_delete ${HOME}/twttr_autodestructor_FAILED_DELETE_$(date +%d%m%y_%H%M%S)
