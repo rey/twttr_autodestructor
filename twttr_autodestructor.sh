@@ -2,6 +2,7 @@
 # Version 1.0
 # Rey Dhuny
 #
+#
 # ABOUT
 # =====
 # `twttr_autodestructor.sh` is a bash script which you can run on a daily/weekly basis to:
