@@ -26,15 +26,15 @@ debug() {
   echo
 }
 
-cleanup() {
-  echo "Performing cleanup"
-  rm -rf ${WORKSPACE_FOLDER}
-  if [ $? -eq 0 ]; then
-    echo "${WORKSPACE_FOLDER} destroyed"
-  else
-    echo "ERROR at ${FUNCNAME}: ${WORKSPACE_FOLDER} unable to be destroyed"
-  fi
-}
+# cleanup() {
+#   echo "Performing cleanup"
+#   rm -rf ${WORKSPACE_FOLDER}
+#   if [ $? -eq 0 ]; then
+#     echo "${WORKSPACE_FOLDER} destroyed"
+#   else
+#     echo "ERROR at ${FUNCNAME}: ${WORKSPACE_FOLDER} unable to be destroyed"
+#   fi
+# }
 
 createWorkspace() {
   # if ${WORKSPACE_FOLDER} does not exist
@@ -108,10 +108,11 @@ createBackup() {
       cp ${WORKSPACE_FOLDER}/${ARCHIVE_FILE} ${BACKUP_FOLDER}
       # If copy was successful
       if [ $? -eq 0 ]; then
+        echo "Copy was successful, doing git stuff"
         # Add to git repo
         cd ${BACKUP_FOLDER} && git add . && git commit -m "Latest twttr updates" && cd ${WORKSPACE_FOLDER}
       else
-        echo "ERROR at ${FUNCNAME}: Unable to do the git stuff"
+        echo "ERROR at ${FUNCNAME}: Copy was not successful"
         exit
       fi
 
@@ -152,12 +153,11 @@ destroyTweets() {
 }
 
 
-trap cleanup EXIT
+trap destroyWorkspace EXIT
 
 mkdir -p ${BACKUP_FOLDER}
 # debug
 createWorkspace
 createDumpfile
 createBackup
-destroyWorkspace
-
+destroyTweets
