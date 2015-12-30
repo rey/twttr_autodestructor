@@ -24,6 +24,15 @@
 # 4. Install jq (https://stedolan.github.io/jq)
 # 5. Register an OAuth application to get a consumer key and secret (https://apps.twitter.com/app/new)
 # 6. `twurl authorize --consumer-key key --consumer-secret secret`
+#
+#
+# CRONTAB
+# =======
+#
+# ```
+# SHELL=/bin/sh
+# 45 23 * * * /bin/bash /home/rey/twttr_autodestructor.sh
+# ```
 
 
 # The Twitter account that you want to backup
