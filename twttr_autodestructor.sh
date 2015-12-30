@@ -95,7 +95,7 @@ createBackup() {
   if [ -f ${WORKSPACE_FOLDER}/dumpfile ]; then
 
     # Replace endofline chars
-    awk -v RS='"[^"]*"' -v ORS= '{gsub(/\n/, " ", RT); print $0 RT}' dumpfile > ${ARCHIVE_FILE}
+    awk -v RS='"[^"]*"' -v ORS= '{gsub(/\n/, " ", RT); print $0 RT}' ${WORKSPACE_FOLDER}/dumpfile > ${WORKSPACE_FOLDER}/${ARCHIVE_FILE}
     if [ $? -eq 0 ]; then
       echo "win"
     else
