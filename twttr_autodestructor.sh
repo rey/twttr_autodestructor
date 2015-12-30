@@ -3,10 +3,9 @@ TWITTER_USER=reyhan
 # The location of the backup folder
 BACKUP_FOLDER=${HOME}/archive_${TWITTER_USER}
 # The archive file
-ARCHIVE_FILE=${TWITTER_USER}_$(date +%d%m%y).csv
+ARCHIVE_FILE=${TWITTER_USER}_$(date +%d%m%y_%H%M%S).csv
 # The location of the folder where all the magic happens
 WORKSPACE_FOLDER=/tmp/twttr_autodestructor
-
 
 
 debug() {
@@ -25,16 +24,6 @@ debug() {
   echo "*********************"
   echo
 }
-
-# cleanup() {
-#   echo "Performing cleanup"
-#   rm -rf ${WORKSPACE_FOLDER}
-#   if [ $? -eq 0 ]; then
-#     echo "${WORKSPACE_FOLDER} destroyed"
-#   else
-#     echo "ERROR at ${FUNCNAME}: ${WORKSPACE_FOLDER} unable to be destroyed"
-#   fi
-# }
 
 createWorkspace() {
   # if ${WORKSPACE_FOLDER} does not exist
@@ -65,13 +54,11 @@ destroyWorkspace() {
       echo "${WORKSPACE_FOLDER} destroyed"
     else
       echo "ERROR at ${FUNCNAME}: ${WORKSPACE_FOLDER} unable to be destroyed"
-      exit
     fi
 
   else
 
     echo "ERROR at ${FUNCNAME}: ${WORKSPACE_FOLDER} does not exist"
-    exit
 
   fi
 }
@@ -96,11 +83,6 @@ createBackup() {
 
     # Replace endofline chars
     awk -v RS='"[^"]*"' -v ORS= '{gsub(/\n/, " ", RT); print $0 RT}' ${WORKSPACE_FOLDER}/dumpfile > ${WORKSPACE_FOLDER}/${ARCHIVE_FILE}
-    if [ $? -eq 0 ]; then
-      echo "win"
-    else
-      echo "fail"
-    fi
 
     # if ${ARCHIVE_FILE} exists
     if [ -f "${WORKSPACE_FOLDER}/${ARCHIVE_FILE}" ]; then
@@ -156,7 +138,7 @@ destroyTweets() {
 trap destroyWorkspace EXIT
 
 mkdir -p ${BACKUP_FOLDER}
-# debug
+debug
 createWorkspace
 createDumpfile
 createBackup
