@@ -138,7 +138,7 @@ destroyTweets() {
   else
 
     echo "ERROR at ${FUNCNAME}: Unable to delete tweets"
-    cp ${WORKSPACE_FOLDER}/to_delete ${HOME}/twttr_autodestructor_FAILED_DELETE_$(date +%d%m%y)
+    cp ${WORKSPACE_FOLDER}/to_delete ${HOME}/twttr_autodestructor_FAILED_DELETE_$(date +%d%m%y_%H%M%S)
     exit
 
   fi
