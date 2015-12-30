@@ -27,7 +27,7 @@ TWITTER_USER=reyhan
 # The location of the backup folder
 BACKUP_FOLDER=${HOME}/archive_${TWITTER_USER}
 # The archive file
-ARCHIVE_FILE=${TWITTER_USER}_$(date +%d%m%y_%H%M%S).csv
+ARCHIVE_FILE=${TWITTER_USER}_$(date +%d%m%y_%H%M%S).json
 # The location of the folder where all the magic happens
 WORKSPACE_FOLDER=/tmp/twttr_autodestructor
 
