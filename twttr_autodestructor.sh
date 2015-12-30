@@ -150,7 +150,7 @@ destroyTweets() {
   while read tweet_id; do
     echo
     echo $tweet_id
-    twurl --request-method POST /1.1/statuses/destroy/${tweet_id}.json
+    /usr/local/bin/twurl --request-method POST /1.1/statuses/destroy/${tweet_id}.json
     echo
   done < ${WORKSPACE_FOLDER}/to_delete
 
