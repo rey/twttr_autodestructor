@@ -31,7 +31,7 @@ createWorkspace() {
 
     mkdir ${WORKSPACE_FOLDER}
     if [ $? -eq 0 ]; then
-      echo "${WORKSPACE_FOLDER} created"
+      echo "SUCCESS: ${WORKSPACE_FOLDER} created"
     else
       echo "ERROR at ${FUNCNAME}: ${WORKSPACE_FOLDER} unable to be created"
       exit
@@ -51,7 +51,7 @@ destroyWorkspace() {
 
     rm -rf ${WORKSPACE_FOLDER}
     if [ $? -eq 0 ]; then
-      echo "${WORKSPACE_FOLDER} destroyed"
+      echo "SUCCESS: ${WORKSPACE_FOLDER} destroyed"
     else
       echo "ERROR at ${FUNCNAME}: ${WORKSPACE_FOLDER} unable to be destroyed"
     fi
@@ -66,8 +66,7 @@ destroyWorkspace() {
 createDumpfile() {
   /usr/local/bin/t timeline @${TWITTER_USER} --csv --number 1000 --decode-uris > ${WORKSPACE_FOLDER}/dumpfile
   if [ $? -eq 0 ]; then
-
-    echo "dumpfile created"
+    echo "SUCCESS: dumpfile created"
     if [ ! -s ${WORKSPACE_FOLDER}/dumpfile ]; then
       echo "ERROR at ${FUNCNAME}: dumpfile is empty"
       exit
@@ -94,7 +93,7 @@ createBackup() {
       cp ${WORKSPACE_FOLDER}/${ARCHIVE_FILE} ${BACKUP_FOLDER}
       # If copy was successful
       if [ $? -eq 0 ]; then
-        echo "Copy was successful, doing git stuff"
+        echo "SUCCESS: Copy was successful"
         # Add to git repo
         cd ${BACKUP_FOLDER}
         if [ ! -d "${BACKUP_FOLDER}/.git" ]; then
@@ -134,7 +133,7 @@ destroyTweets() {
  
   /usr/local/bin/t delete status -f `cat ${WORKSPACE_FOLDER}/to_delete`
   if [ $? -eq 0 ]; then
-    echo "Tweets deleted"
+    echo "SUCCESS: Tweets deleted"
   else
 
     echo "ERROR at ${FUNCNAME}: Unable to delete tweets"
