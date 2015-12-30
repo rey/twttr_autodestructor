@@ -92,10 +92,15 @@ createDumpfile() {
 
 createBackup() {
   # if dumpfile exists
-  if [ -f /tmp/twttr_autodestructor/dumpfile ]; then
+  if [ -f ${WORKSPACE_FOLDER}/dumpfile ]; then
 
     # Replace endofline chars
     awk -v RS='"[^"]*"' -v ORS= '{gsub(/\n/, " ", RT); print $0 RT}' dumpfile > ${ARCHIVE_FILE}
+    if [ $? -eq 0 ]; then
+      echo "win"
+    else
+      echo "fail"
+    fi
 
     # if ${ARCHIVE_FILE} exists
     if [ -f "${WORKSPACE_FOLDER}/${ARCHIVE_FILE}" ]; then
