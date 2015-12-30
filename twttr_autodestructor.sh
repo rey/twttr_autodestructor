@@ -17,8 +17,9 @@
 #
 # 1. Install Ruby (I'm using 2.1.5)
 # 2. Install Twurl (https://github.com/twitter/twurl)
-# 3. Register an OAuth application to get a consumer key and secret (https://apps.twitter.com/app/new)
-# 4. `twurl authorize --consumer-key key --consumer-secret secret`
+# 3. Install jq
+# 4. Register an OAuth application to get a consumer key and secret (https://apps.twitter.com/app/new)
+# 5. `twurl authorize --consumer-key key --consumer-secret secret`
 
 
 # The Twitter account that you want to backup
