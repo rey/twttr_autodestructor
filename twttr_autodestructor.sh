@@ -15,11 +15,8 @@ debug() {
   echo "REPORTED RUBY VERSION"
   echo "`ruby --version`"
   echo
-  echo "REPORTED T VERSION"
-  echo "`t version`"
-  echo
-  echo "REPORTED T USER"
-  echo "`t whoami`"
+  echo "REPORTED TWURL VERSION"
+  echo "`twurl --version`"
   echo
   echo "*********************"
   echo
@@ -64,7 +61,8 @@ destroyWorkspace() {
 }
 
 createDumpfile() {
-  /usr/local/bin/t timeline @${TWITTER_USER} --csv --number 1000 --decode-uris > ${WORKSPACE_FOLDER}/dumpfile
+  # /usr/local/bin/t timeline @${TWITTER_USER} --csv --number 1000 --decode-uris > ${WORKSPACE_FOLDER}/dumpfile
+  /usr/local/bin/twurl "/1.1/statuses/user_timeline.json?screen_name=${TWITTER_USER}&count=200" > ${WORKSPACE_FOLDER}/dumpfile
   if [ $? -eq 0 ]; then
     echo "SUCCESS: dumpfile created"
     if [ ! -s ${WORKSPACE_FOLDER}/dumpfile ]; then
@@ -84,8 +82,7 @@ createBackup() {
   # if dumpfile exists
   if [ -f ${WORKSPACE_FOLDER}/dumpfile ]; then
 
-    # Replace endofline chars
-    awk -v RS='"[^"]*"' -v ORS= '{gsub(/\n/, " ", RT); print $0 RT}' ${WORKSPACE_FOLDER}/dumpfile > ${WORKSPACE_FOLDER}/${ARCHIVE_FILE}
+    cat ${WORKSPACE_FOLDER}/dumpfile | jq ".[] | {id: .id_str, text: .text, created: .created_at}" > ${WORKSPACE_FOLDER}/${ARCHIVE_FILE}
 
     # if ${ARCHIVE_FILE} exists
     if [ -f "${WORKSPACE_FOLDER}/${ARCHIVE_FILE}" ]; then
@@ -94,7 +91,7 @@ createBackup() {
       # If copy was successful
       if [ $? -eq 0 ]; then
         echo "SUCCESS: Copy was successful"
-        # Add to git repo
+        # Add to git repo
         cd ${BACKUP_FOLDER}
         if [ ! -d "${BACKUP_FOLDER}/.git" ]; then
           git init
@@ -122,25 +119,24 @@ createBackup() {
 
 
 destroyTweets() {
-  # Remove columns headers
-  sed -i '1d' ${WORKSPACE_FOLDER}/${ARCHIVE_FILE}
 
-  # Get IDs only
-  awk -F "," '{print $1}' ${WORKSPACE_FOLDER}/${ARCHIVE_FILE} > ${WORKSPACE_FOLDER}/to_delete
+  cat ${WORKSPACE_FOLDER}/dumpfile | jq ".[] | .id_str" | sed 's/\"//g' > ${WORKSPACE_FOLDER}/to_delete
 
-  # Put the IDs on one line for t
-  sed -i ':a;N;$!ba;s/\n/ /g' ${WORKSPACE_FOLDER}/to_delete
- 
-  /usr/local/bin/t delete status -f `cat ${WORKSPACE_FOLDER}/to_delete`
+  while read tweet_id; do
+    echo
+    echo $tweet_id
+    twurl -X POST /1.1/statuses/destroy/${tweet_id}.json
+    echo
+  done < ${WORKSPACE_FOLDER}/to_delete
+
   if [ $? -eq 0 ]; then
     echo "SUCCESS: Tweets deleted"
   else
-
     echo "ERROR at ${FUNCNAME}: Unable to delete tweets"
     cp ${WORKSPACE_FOLDER}/to_delete ${HOME}/twttr_autodestructor_FAILED_DELETE_$(date +%d%m%y_%H%M%S)
     exit
-
   fi
+
 }
 
 
