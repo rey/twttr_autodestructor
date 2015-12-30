@@ -66,14 +66,18 @@ destroyWorkspace() {
 createDumpfile() {
   /usr/local/bin/t timeline @${TWITTER_USER} --csv --number 1000 --decode-uris > ${WORKSPACE_FOLDER}/dumpfile
   if [ $? -eq 0 ]; then
+
     echo "dumpfile created"
     if [ ! -s ${WORKSPACE_FOLDER}/dumpfile ]; then
       echo "ERROR at ${FUNCNAME}: dumpfile is empty"
       exit
     fi
+
   else
+
     echo "ERROR at ${FUNCNAME}: Unable to create dumpfile"
     exit
+
   fi
 }
 
@@ -96,7 +100,7 @@ createBackup() {
         if [ ! -d "${BACKUP_FOLDER}/.git" ]; then
           git init
         fi
-        git add . && git commit -m "Latest twttr updates" && cd ${WORKSPACE_FOLDER}
+        git add . && git commit -m "Add twitter updates from ${ARCHIVE_FILE}" && cd ${WORKSPACE_FOLDER}
       else
         echo "ERROR at ${FUNCNAME}: Copy was not successful"
         exit
@@ -132,9 +136,11 @@ destroyTweets() {
   if [ $? -eq 0 ]; then
     echo "Tweets deleted"
   else
+
     echo "ERROR at ${FUNCNAME}: Unable to delete tweets"
     cp ${WORKSPACE_FOLDER}/to_delete ${HOME}/twttr_autodestructor_FAILED_DELETE_$(date +%d%m%y)
     exit
+
   fi
 }
 
