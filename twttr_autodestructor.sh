@@ -92,7 +92,11 @@ createBackup() {
       if [ $? -eq 0 ]; then
         echo "Copy was successful, doing git stuff"
         # Add to git repo
-        cd ${BACKUP_FOLDER} && git add . && git commit -m "Latest twttr updates" && cd ${WORKSPACE_FOLDER}
+        cd ${BACKUP_FOLDER}
+        if [ ! -d "${BACKUP_FOLDER}/.git" ]; then
+          git init
+        fi
+        git add . && git commit -m "Latest twttr updates" && cd ${WORKSPACE_FOLDER}
       else
         echo "ERROR at ${FUNCNAME}: Copy was not successful"
         exit
