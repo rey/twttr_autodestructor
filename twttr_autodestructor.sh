@@ -155,9 +155,9 @@ destroyTweets() {
   done < ${WORKSPACE_FOLDER}/to_delete
 
   if [ $? -eq 0 ]; then
-    echo
-    echo "SUCCESS: Tweets deleted"
     NO_OF_TWEETS=`cat ${WORKSPACE_FOLDER}/to_delete | wc -l`
+    echo
+    echo "SUCCESS: ${NO_OF_TWEETS} tweets deleted"
     /usr/local/bin/twurl --data "description=${NO_OF_TWEETS} twttr updates evaporated on $(date +"%A %d %B %Y")" /1.1/account/update_profile.json
   else
     echo "ERROR at ${FUNCNAME}: Unable to delete tweets"
