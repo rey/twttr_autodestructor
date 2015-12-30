@@ -88,18 +88,14 @@ destroyWorkspace() {
 
 createDumpfile() {
   /usr/local/bin/twurl "/1.1/statuses/user_timeline.json?screen_name=${TWITTER_USER}&count=200&trim_user=1" > ${WORKSPACE_FOLDER}/dumpfile
-  if [ $? -eq 0 ]; then
-    echo "SUCCESS: dumpfile created"
-    if [ ! -s ${WORKSPACE_FOLDER}/dumpfile ]; then
-      echo "ERROR at ${FUNCNAME}: dumpfile is empty"
-      exit
-    fi
-
-  else
-
-    echo "ERROR at ${FUNCNAME}: Unable to create dumpfile"
+  
+  # TODO: Find a more elegant way of doing this
+  # Twitter API returns "[]" when there are no tweets
+  CHECK_DUMPFILE=`cat ${WORKSPACE_FOLDER}/dumpfile | wc -c`
+  
+  if [ "${CHECK_DUMPFILE}" -le 2 ]; then
+    echo "ERROR at ${FUNCNAME}: dumpfile is empty"
     exit
-
   fi
 }
 
