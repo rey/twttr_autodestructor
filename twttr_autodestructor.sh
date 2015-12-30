@@ -41,10 +41,10 @@ debug() {
   echo "******* DEBUG *******"
   echo
   echo "REPORTED RUBY VERSION"
-  echo "`ruby --version`"
+  echo "`/usr/bin/ruby --version`"
   echo
   echo "REPORTED TWURL VERSION"
-  echo "`twurl --version`"
+  echo "`/usr/local/bin/twurl --version`"
   echo
   echo "*********************"
   echo
