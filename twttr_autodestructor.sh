@@ -10,7 +10,7 @@
 #
 # `twttr_autodestructor.sh` is a bash script which you can run on a daily/weekly basis to:
 # 1. Create a local backup of your twitter updates 
-# 2. Delete your twitter updates from Twitter's servers
+# 2. Delete your tweets from Twitter's servers
 #
 #
 # INSTALL
