@@ -143,25 +143,18 @@ createBackup() {
 
 destroyTweets() {
 
+  # Create to_delete file
   cat ${WORKSPACE_FOLDER}/dumpfile | jq ".[] | .id_str" | sed 's/\"//g' > ${WORKSPACE_FOLDER}/to_delete
 
+  # Set cheeky variable
+  NO_OF_TWEETS=`cat ${WORKSPACE_FOLDER}/to_delete | wc -l`
+
   while read tweet_id; do
-    echo
-    echo $tweet_id
-    /usr/local/bin/twurl --request-method POST /1.1/statuses/destroy/${tweet_id}.json
-    echo
+    echo "Deleting ${tweet_id}"
+    /usr/local/bin/twurl --request-method POST /1.1/statuses/destroy/${tweet_id}.json?trim_user=1
   done < ${WORKSPACE_FOLDER}/to_delete
 
-  if [ $? -eq 0 ]; then
-    NO_OF_TWEETS=`cat ${WORKSPACE_FOLDER}/to_delete | wc -l`
-    echo
-    echo "SUCCESS: ${NO_OF_TWEETS} tweet(s) deleted"
-    /usr/local/bin/twurl --data "description=${NO_OF_TWEETS} twttr update(s) evaporated on $(date +"%A %d %B %Y")" /1.1/account/update_profile.json
-  else
-    echo "ERROR at ${FUNCNAME}: Unable to delete tweets"
-    cp ${WORKSPACE_FOLDER}/to_delete ${HOME}/twttr_autodestructor_FAILED_DELETE_$(date +%d%m%y_%H%M%S)
-    exit
-  fi
+  /usr/local/bin/twurl --data "description=${NO_OF_TWEETS} twttr update(s) evaporated on $(date +"%A %d %B %Y")" /1.1/account/update_profile.json
 
 }
 
