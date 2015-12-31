@@ -104,6 +104,7 @@ createDumpfile() {
   # Twitter API returns "[]" when there are no tweets
   CHECK_DUMPFILE=`cat ${WORKSPACE_FOLDER}/dumpfile | wc -c`
   
+  # Exit if there is nothing to backup/delete
   if [ "${CHECK_DUMPFILE}" -le 2 ]; then
     echo "ERROR at ${FUNCNAME}: dumpfile is empty"
     exit
