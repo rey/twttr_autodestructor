@@ -112,44 +112,34 @@ createDumpfile() {
 }
 
 createBackup() {
-  # if dumpfile exists
+
+  # If dumpfile exists
   if [ -f ${WORKSPACE_FOLDER}/dumpfile ]; then
 
-    cat ${WORKSPACE_FOLDER}/dumpfile | jq ".[] | {id: .id_str, text: .text, created: .created_at}" > ${WORKSPACE_FOLDER}/${ARCHIVE_FILE}
+    # Create backup file from dumpfile
+    cat ${WORKSPACE_FOLDER}/dumpfile | jq ".[] | {id: .id_str, text: .text, created: .created_at}" > ${BACKUP_FOLDER}/${ARCHIVE_FILE}
 
-    # if ${ARCHIVE_FILE} exists
-    if [ -f "${WORKSPACE_FOLDER}/${ARCHIVE_FILE}" ]; then
+    # If `cat` was successful
+    if [ $? -eq 0 ]; then
+      echo "SUCCESS: Copy was successful"
 
-      cp ${WORKSPACE_FOLDER}/${ARCHIVE_FILE} ${BACKUP_FOLDER}
-      # If copy was successful
-      if [ $? -eq 0 ]; then
-        echo "SUCCESS: Copy was successful"
-        # Add to git repo
-        cd ${BACKUP_FOLDER}
-        if [ ! -d "${BACKUP_FOLDER}/.git" ]; then
-          git init
-        fi
-        git add . && git commit -m "Add twitter updates from ${ARCHIVE_FILE}" && cd ${WORKSPACE_FOLDER}
-      else
-        echo "ERROR at ${FUNCNAME}: Copy was not successful"
-        exit
+      cd ${BACKUP_FOLDER}
+
+      # If ${BACKUP_FOLDER} isn't a git repo
+      if [ ! -d "${BACKUP_FOLDER}/.git" ]; then
+        git init
       fi
 
+      git add . && git commit -m "Add twitter updates from ${ARCHIVE_FILE}" && cd ${WORKSPACE_FOLDER}
     else
-
-      echo "ERROR at ${FUNCNAME}: ${ARCHIVE_FILE} does not exist"
-      exit
-
+      echo "ERROR at ${FUNCNAME}: Copy was not successful"
     fi
-
   else
-
     echo "ERROR at ${FUNCNAME}: dumpfile does not exist"
     exit
-
   fi
-}
 
+}
 
 destroyTweets() {
 
