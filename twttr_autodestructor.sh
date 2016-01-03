@@ -150,7 +150,9 @@ destroyTweets() {
   NO_OF_TWEETS=`cat ${WORKSPACE_FOLDER}/to_delete | wc -l`
 
   while read tweet_id; do
+    echo "***"
     echo "Deleting ${tweet_id}"
+    echo "***"
     /usr/local/bin/twurl --request-method POST /1.1/statuses/destroy/${tweet_id}.json?trim_user=1
   done < ${WORKSPACE_FOLDER}/to_delete
 
