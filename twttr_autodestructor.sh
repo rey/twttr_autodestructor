@@ -133,6 +133,7 @@ createBackup() {
       git add . && git commit -m "Add twitter updates from ${ARCHIVE_FILE}" && cd ${WORKSPACE_FOLDER}
     else
       echo "ERROR at ${FUNCNAME}: Copy was not successful"
+      exit
     fi
   else
     echo "ERROR at ${FUNCNAME}: dumpfile does not exist"
